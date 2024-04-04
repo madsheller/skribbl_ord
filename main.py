@@ -2,6 +2,7 @@ import httpx
 from bs4 import BeautifulSoup
 from wiktionaryparser import WiktionaryParser
 from nltk.corpus import wordnet as wn
+from tqdm import tqdm
 
 URL = 'https://www.stengaardkirke.dk'
 
@@ -31,11 +32,9 @@ for w in set(words):
 parser = WiktionaryParser()
 parser.set_default_language('danish')
 
-for w in skribbl:
+for w in tqdm(skribbl):
     try:
-        print(f"{w} is a {parser.fetch(w)[0]['definitions'][0]['partOfSpeech']}")
+        if parser.fetch(w)[0]['definitions'][0]['partOfSpeech'] != 'noun':
+            skribbl.remove(w)
     except:
         pass
-    
-
-        
