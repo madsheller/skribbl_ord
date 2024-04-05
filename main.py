@@ -2,7 +2,13 @@ from sproget import skribbl
 
 URL = 'https://www.stengaardkirke.dk'
 
-ord = skribbl(URL=URL)
+skribbl = skribbl()
+
+skribbl.fetch(URL)
+
+ord = skribbl.get_results()
+
+skribbl.to_txt()
 
 print(ord)
 
