@@ -1,40 +1,8 @@
-import httpx
-from bs4 import BeautifulSoup
-from wiktionaryparser import WiktionaryParser
-from nltk.corpus import wordnet as wn
-from tqdm import tqdm
+from sproget import skribbl
 
 URL = 'https://www.stengaardkirke.dk'
 
-html = httpx.get(URL)
+ord = skribbl(URL=URL)
 
-soup = BeautifulSoup(html, 'html.parser')
+print(ord)
 
-text = soup.get_text()
-words = text.split()
-
-rem = ['.', ',', '(', ')', '!', '…', '?', '"', "'", ';', '/', ':', '-', ' ']
-words = [w.translate((str.maketrans('','', ''.join(rem)))).lower() for w in words]
-
-filter = ['skal']
-
-skribbl = []
-
-# list comprehenssion slower
-for w in set(words):
-    try:
-        tmp = wn.synsets(w, lang='dan')[0].pos()
-        if tmp == 'n' and w not in filter:
-            skribbl.append(w)
-    except:
-        pass
-
-parser = WiktionaryParser()
-parser.set_default_language('danish')
-
-for w in tqdm(skribbl):
-    try:
-        if parser.fetch(w)[0]['definitions'][0]['partOfSpeech'] != 'noun':
-            skribbl.remove(w)
-    except:
-        pass
